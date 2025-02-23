@@ -1,0 +1,14 @@
+{
+  "name": "react-movies",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "start": "npm --prefix frontend run dev",
+    "server": "npm --prefix server run start",
+    "dev": "concurrently \"npm run server\" \"npm run start\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
