@@ -46,6 +46,6 @@
     }
   }
   
-  .movies-grid > * {
+  .grid-movies > * {
     animation: fadeIn 0.3s ease-out forwards;
   }
