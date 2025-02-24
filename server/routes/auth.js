@@ -37,17 +37,28 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     // Check if user exists
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (user.rows.length === 0) return res.status(400).json({ message: "Invalid credentials" });
+    const userQuery = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    
+    if (userQuery.rows.length === 0) return res.status(400).json({ message: "Invalid credentials" });
+
+    const user = userQuery.rows[0]; // ✅ Get user from query result
 
     // Check password
-    const validPassword = await bcrypt.compare(password, user.rows[0].password);
+    const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).json({ message: "Invalid credentials" });
 
-    // Generate JWT
-    const token = jwt.sign({ userId: user.rows[0].id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // 🔥 **FIX: Use user.id instead of user.id**
+    const token = jwt.sign(
+      { id: user.id },  // ✅ Correct reference
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    res.json({ token, user: { id: user.rows[0].id, username: user.rows[0].username, email: user.rows[0].email } });
+    res.json({ 
+      token, 
+      user: { id: user.id, username: user.username, email: user.email } 
+    });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
