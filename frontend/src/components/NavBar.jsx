@@ -27,10 +27,10 @@ function NavBar() {
                             <img src={("../public/user.png")} alt="Logo" />
                         </Link>
                         <Link to="/register" className="dropdown-item">
-                            <img src={("../public/user.png")} alt="Logo" />
+                            <img src={("../public/vite.svg")} alt="Logo" />
                         </Link>
                         <Link to="/login" className="dropdown-item">
-                            <img src={("../public/user.png")} alt="Logo" />
+                            <img src={("../public/login.png")} alt="Logo" />
                         </Link>
                     </div>
                 )}

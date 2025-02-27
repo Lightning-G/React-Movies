@@ -8,7 +8,6 @@ function MovieCard({ movie }) {
     const token = sessionStorage.getItem("token");
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
         if (!token) {
             setFavorite(false);
@@ -24,25 +23,34 @@ function MovieCard({ movie }) {
                     console.error("❌ No token found in localStorage");
                     return;
                 }
-        
+
                 const response = await axios.get("http://localhost:5000/api/favorites", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-        
+
                 console.log("✅ Favorites fetched:", response.data);
-                setFavorite(response.data);
+
+                // Check if the current movie is in favorites
+                const isFavorite = response.data.some(fav => Number(fav.movie_id) === Number(movie.id));
+                setFavorite(isFavorite);
             } catch (error) {
                 console.error("❌ Error fetching favorites:", error.response?.data || error);
             }
         };
-        
+
 
         fetchFavorites();
     }, [token, movie.id]);
 
+    useEffect(() => {
+        console.log(`Updated Favorite State -> Movie ID: ${movie.id} | Favorite:`, favorite);
+    }, [favorite]);
+
+
+
     const handleRemove = async (e) => {
         e.preventDefault();
-    
+
         try {
             await axios.delete(`http://localhost:5000/api/favorites/${movie.id}`, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -57,10 +65,9 @@ function MovieCard({ movie }) {
     const handleAdd = async (e) => {
         e.preventDefault();
 
-
         try {
-            await axios.post("http://localhost:5000/api/favorites",
-                { movie_id: movie.id },
+            await axios.post(`http://localhost:5000/api/favorites/${movie.id}`, // 👈 Send movie_id in the URL
+                {}, // Empty body, since movie_id is in the URL now
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             console.log(`Added movie with ID: ${movie.id}`);
